@@ -10,6 +10,10 @@ public class WheelSpinner : MonoBehaviour
     [SerializeField] private float _deceleration = 100f;
     [SerializeField] private Animator _animator;
     [SerializeField] private SpinButtonView _spinButtonView;
+    [SerializeField] private ParticleSystem _particle;
+
+    public event Action OnSpinEnd;
+    public event Action OnSpinStart; 
 
     private bool _isSpinning = false;
     private float _currentSpeed;
@@ -29,7 +33,9 @@ public class WheelSpinner : MonoBehaviour
                 _currentSpeed = 0;
 
                 _currentAngle = transform.eulerAngles.z;
-                _spinButtonView.SetInteractable(true);
+                _particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                
+                OnSpinEnd?.Invoke();
             }
         }
     }
@@ -40,10 +46,11 @@ public class WheelSpinner : MonoBehaviour
         {
             return;
         }
-
+        OnSpinStart?.Invoke();
         _isSpinning = true;
         _spinButtonView.SetInteractable(false);
         _animator.SetTrigger(FlyToSpin);
         _currentSpeed = Random.Range(_minSpeed, _maxSpeed);
+        _particle.Play();
     }
 }
