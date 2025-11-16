@@ -7,6 +7,7 @@ public class ChestVisual : MonoBehaviour
     
     [SerializeField] private UIManager _uiManager;
     [SerializeField] private AwardVisualController _awardVisualController;
+    [SerializeField] private SoundsManager _soundsManager;
 
     private FinalAnimation _finalAnimation;
     private Animator _chestAnimator;
@@ -36,6 +37,7 @@ public class ChestVisual : MonoBehaviour
     {
         if (_uiManager.TokensCount == 0)
         {
+            _soundsManager.PlayCollect();
             _finalAnimation.Show();
         }
     }

@@ -11,6 +11,7 @@ public class WheelSpinner : MonoBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] private SpinButtonView _spinButtonView;
     [SerializeField] private ParticleSystem _particle;
+    [SerializeField] private SoundsManager _soundsManager;
 
     public event Action OnSpinEnd;
     public event Action OnSpinStart; 
@@ -27,8 +28,14 @@ public class WheelSpinner : MonoBehaviour
             transform.Rotate(0,0, -_currentSpeed * Time.deltaTime);
             _currentSpeed -= _deceleration * Time.deltaTime;
 
+            float normalizedSpeed = _currentSpeed / _maxSpeed;
+            float pitch = Mathf.Lerp(0.5f, 1.2f, normalizedSpeed);
+            _soundsManager.SetWheelSpinPitch(pitch);
+
             if (_currentSpeed <= 0)
             {
+                _soundsManager.StopWheelSpin();
+                
                 _isSpinning = false;
                 _currentSpeed = 0;
 
@@ -46,7 +53,10 @@ public class WheelSpinner : MonoBehaviour
         {
             return;
         }
+        
         OnSpinStart?.Invoke();
+        
+        _soundsManager.StartWheelSpin();
         _isSpinning = true;
         _spinButtonView.SetInteractable(false);
         _animator.SetTrigger(FlyToSpin);
